@@ -1,1 +1,5 @@
-New Employee
+<h2>New Employee</h2>
+<form action="/employees" method="POST">
+    <%- include('_form_fields') %> <!-- This is the ejs import syntax, which tells the server to do something on the back end versus rendering it as html, etc.-->
+    <input type="submit" value="Create New Employee" />  <input type="button" onclick="location.href='/';" value="Cancel"/>
+</form>

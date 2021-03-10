@@ -1,0 +1,8 @@
+<!--    This file is named according to the convention that uses underscores to indicate a partial file, rather than one which the server will ever render on its own.
+        This file is a partial, for inclusion in various other locations in the app.
+        This file shows several form fields which will be reused several times, and allows us to control, edit, use, etc. them conveniently.
+-->
+<label>Name</label>
+<input type="text" name="name" value="<%=employee.name%>"/> <!--The "name" attribute is how the server will obtain this information from the object. The form will send all the information in the form to the server. (That's what a form does.) We will be able to use the identifier of body.name in the request to get the value of this input for use elsehwere.
+We want to put the current employee's name in this form, because this form is being used to Create a new Employee, and the information about that Employee has been submitted by the user via a form. We created a New Employee under the routes/employees.js file; we want to use the name of that employee here.
+The syntax of  < and  % is ejs syntax. Adding the = tells the server that whatever text is within those symbols should be outputted as HTML in the page that will be rendered later in the process.-->

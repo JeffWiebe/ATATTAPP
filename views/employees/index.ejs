@@ -1,1 +1,12 @@
-All Employees
+<h2>Search Employees</h2>
+<form action="/employees" method="GET">
+    <label>Name</label>
+    <input type="text" name="name" value="<%= searchOptions.name %>">
+    <button type="submit">Search</button>
+</form>
+<br>
+<% employees.forEach(employee => {  %>  <!-- For each employee we have... -->
+    <div>
+        <%= employee.name %> - <%= employee.shift %>       <!-- ... we will output their name and their shift-->
+    </div>
+<% }); %> <!-- The < % flag (without - or = ) allows us to run code on our server.-->
