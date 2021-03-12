@@ -1,0 +1,43 @@
+<!--    This file is named according to the convention that uses underscores to indicate a partial file, rather than one which the server will ever render on its own.
+        This file is a partial, for inclusion in various other locations in the app.
+        This file shows several form fields which will be reused several times, and allows us to control, edit, use, etc. them conveniently.
+-->
+
+<label>Employee Name</label><br>            <!-- The employee name with whom the document is to be associated. -->
+<select name="employee">
+<% employees.forEach(employee => { %>           <!-- We need to loop through all the different employees in order to allow the user to select an existing employee. We'll use a variable, 'employees', which will contain the names of every employee.-->
+        <% if ( employee.id === document.employeeName ) { %>             <!-- If the employee id matches the 'employeeName' key (which, in the Employee model, is itself a mongoose.Schema.Types.ObjectId, in the id format (a string) vs the _id format (a hex string)...)-->
+        <option selected label="<%= employee.name %>" value="<%= employee.id %>">        <!-- ...then we will create each of the options (employees) for the user to select from. The HTML <option> element is used to define an item contained in a <select>, an <optgroup>, or a <datalist> element. As such, <option> can represent menu items in popups and other lists of items in an HTML document.-->
+        <% } else { %>
+        <option label="<%= employee.name %>" value="<%= employee.id %>">        <!-- Same option, but without the 'selected' attribute.-->
+       <% }; %>
+<% }); %>
+</select><br><br>
+<label>Document Title</label><br>
+<input type="text" name="documentTitle" size="60" value="<%=document.documentTitle%>"/><br><br> <!--The "name" attribute is how the server will obtain this information from the object. The form will send all the information in the form to the server. (That's what a form does.) We will be able to use the identifier of body.name in the request to get the value of this input for use elsehwere.
+We want to put the current document's name in this form, because this form is being used to Create a new Document, and the information about that Document has been submitted by the user via a form. We created a New Document under the routes/documents.js file; we want to use the name of that document here.
+The syntax of  < and  % is ejs syntax. Adding the = tells the server that whatever text is within those symbols should be outputted as HTML in the page that will be rendered later in the process.-->
+<label>Category</label><br>
+<input type="text" name="documentCategory" value="<%=document.documentCategory%>"/><br><br>
+<label for="description ">Description</label><br>
+<textarea id="description" rows="12" cols="48" name="description"><%=document.documentDescription%></textarea><br><br>
+<label>Tags</label><br>
+<input type="text" name="documentTags" size="40" value="<%=document.documentTags%>"/><br><br>
+<label>Pages</label><br>
+<input type="Number" name="documentPages" min="1" value="<%=document.documentPages%>"/><br><br>
+<label>Cover</label><br>
+<input type="file" name="cover" size="30" value="<%=document.cover%>"/><br><br>
+<label>Scan</label><br>
+<input type="text" name="documentScan" size="30" value="<%=document.documentScan%>"/><br><br>
+<label>Key Date</label><br>
+<input type="date" name="documentKeyDate" value="<%=document.documentKeyDate == null ? '' : document.documentKeyDate.toISOString().split('T')[0]%>"/>          <!-- To makes sure the date is in the correct format, we use the .toISOString() function, and then the .split() function to get rid of the Time part of the Date ('T'). The [0] indicates we want to keep the first part of the split. The toISOString() method returns a string in simplified extended ISO format (ISO 8601- an international standard covering the exchange of date- and time-related data), which is always 24 or 27 characters long (YYYY-MM-DDTHH:mm:ss.sssZ or ±YYYYYY-MM-DDTHH:mm:ss.sssZ, respectively).  The split() method divides a String into an ordered list of substrings, puts these substrings into an array, and returns the array.  The division is done by searching for a pattern; where the pattern is provided as the first parameter in the method's call.  As of ISO 8601-1:2019, the basic format is T[hh][mm][ss].So a time might appear as either "T134730" in the basic format or "T13:47:30" in the extended format. A single point in time can be represented by concatenating a complete date expression, the letter "T" as a delimiter, and a valid time expression. --><br><br>
+<label>Key Funds</label><br>$
+<% let amount = document.documentKeyFunds; %>
+<input type="Number" name="documentKeyFunds" value="<%  new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', unit: 'dollar'}).format(amount); %>"/>
+<br><br>
+<label>Created Date</label><br>
+<input type="text" name="documentCreatedDate" size="10" value="<%=document.documentCreatedDate == null ? '' : document.documentCreatedDate.toISOString().split('T')[0]%>"/><br><br>
+<label>Created By</label><br>
+<input type="text" name="documentCreatedBy" value="<%=document.documentCreatedBy%>"/><br><br>
+<label>Network Path</label><br>(H:/Alliance_Truss/Employees/Plant-ABB/Profiles) or (H:/Alliance_Truss/Employees/Plant-MIS/Profiles)<br>
+<input type="text" name="documentAllianceTrussNetworkPath" size="80" value="<%=document.documentAllianceTrussNetworkPath%>"/><br><br>

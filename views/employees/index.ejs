@@ -7,6 +7,8 @@
 <br>
 <% employees.forEach(employee => {  %>  <!-- For each employee we have... -->
     <div>
-        <%= employee.name %> - <%= employee.shift %>       <!-- ... we will output their name and their shift-->
+        <%= employee.name %> - <%= employee.shift %> - <%= employee._id %>       <!-- ... we will output their name and their shift-->
     </div>
 <% }); %> <!-- The < % flag (without - or = ) allows us to run code on our server.-->
+<br>
+<a href='/'>Employee Link</a>

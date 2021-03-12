@@ -1,0 +1,14 @@
+<h2>Search Documents</h2>
+<form action="/documents" method="GET">
+    <label>Name</label>
+    <input type="text" name="name" value="<%= searchOptions.name %>">
+    <button type="submit">Search</button>
+</form>
+<br>
+<% documents.forEach(document => {  %>  <!-- For each document we have... -->
+    <div>
+        <%= document.employee %> - <%= document.documentTitle %> - <%= document.documentCategory %> - <%= document.documentScan %>        <!-- ... we will output their name and their shift-->
+    </div>
+<% }); %> <!-- The < % flag (without - or = ) allows us to run code on our server.-->
+<br>
+<a href='/'>Document Link</a>

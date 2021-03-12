@@ -27,6 +27,14 @@ try {
     // res.render('employees/index');
 });
 
+//Specific Employees  -------------------------------------------------------------------------------------------------------------------------------
+/*router.get('/employees/:id', async (req, res) => {
+    let id = req.query.id;
+    let employee = await Employee.find({id});
+    res.render('employees/employee.ejs', { employee })
+}
+
+)*/
 //New Employees  -------------------------------------------------------------------------------------------------------------------------------
 //Show the Form for Creating New Employees
 router.get('/new', (req, res) => {
