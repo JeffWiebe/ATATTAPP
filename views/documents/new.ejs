@@ -4,5 +4,7 @@
 As an example, an HTML file might be designated text/html; charset=UTF-8. In this example, text is the type, html is the subtype, and charset=UTF-8 is an optional parameter indicating the character encoding.
     In this case, we are going to be using multipart/form data: the type that allows file <input> element(s) to upload file data.-->
     <%- include('_form_fields') %> <!-- This is the ejs import syntax, which tells the server to do something on the back end versus rendering it as html, etc.-->
-    <input type="submit" value="Create New Document" />  <input type="button" onclick="location.href='/';" value="Cancel"/>
+    <!-- <input type="submit" value="Create New Document" />  <input type="button" onclick="location.href='/';" value="Cancel"/> -->
+    <a href="/documents">Cancel</a>
+    <button type="submit">Create</button>
 </form>

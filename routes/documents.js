@@ -4,8 +4,10 @@ const
         express                             =   require('express'),     // We have to require express, so we do so.
         Employees                           =   require('../models/employee'),       //We need our Employees model, so we can use .find() on it.             
         router                              =   express.Router(),               // Routing refers to how an application’s endpoints (URIs or paths + an HTTP request method like GET, POST, etc.) respond to client requests. The application “listens” for requests that match the specified route(s) and method(s), and when it detects a match, it calls the specified callback function. The Router() middleware is part of express; we need to assign it to a variable title so that we can use it in the application.
+        fs                                  =   require('fs'),
         multer                              =   require('multer'),
         path                                =   require('path'),    // Library included with express
+        Document                            =   require('../models/document'),
         imageMediaTypes                     =   ['images/jpg', 'images/jpeg', 'images/png', 'images/gif', 'images/tiff', 'images/jfif', 'images/bmp'],        //Setting up the media types we will allow to be uploaded to our Thumbnails. This will need to be accompanied later in the build, with another such line accepting PDFs, docx, etc, for the files themselves. 
         uploadPath                          =   path.join('public', Document.coverImageBasePath),       // We will use the join() function on our path variable, passing the elements to be joined of our 'public' folder with our variable documentThumbsBasePath, which is (at this typing) set to uploads/documents/thumbnails.
         // documentScan                            =   document.documentScan,       // Not ready at this point in the build
@@ -13,18 +15,37 @@ const
             dest:   uploadPath,      // We set the destination for our upload equal to our uploadPath variable.
             fileFilter: (req, file, callback) => {      // We need to filter which files our server will accept, so we don't get hacked or even just sent junk.
                 callback(null, imageMediaTypes);        //First parameter is an error function; we have no error, so we call that null. The second parameter is a Boolean: true if the file is accepted; false if it is not. We use our imageMediaTypes variable, above, in which we stipulated all the file types we'd accept for this use.
-                });
-        }),
-        Document                            =   require('../models/document');
+        }
+        });
 
 // Routes  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //All Documents  -------------------------------------------------------------------------------------------------------------------------------
-router.get('/', (req, res) => {
-    res.send('All Documents');
-});
+
+router.get('/', async (req, res) => {
+    let query = Document.find();
+    if (req.query.title != null && req.query.title != '') {
+      query = query.regex('title', new RegExp(req.query.title, 'i'));
+    }
+    // if (req.query.publishedBefore != null && req.query.publishedBefore != '') {
+    //   query = query.lte('publishDate', req.query.publishedBefore)
+    // }
+    // if (req.query.publishedAfter != null && req.query.publishedAfter != '') {
+    //   query = query.gte('publishDate', req.query.publishedAfter)
+    // }
+    try {
+      const documents = await query.exec();
+      res.render('documents/index', {
+        documents: documents,
+        searchOptions: req.query
+      })
+    } catch {
+      res.redirect('/');
+    };
+  });
 
 //New Documents  -------------------------------------------------------------------------------------------------------------------------------
     router.get('/new', async (req, res) => {
+        renderNewPage(res, new Document());
     //     try {        // This code block, from an earlier point in the build, was made into the function renderNewPage()
     //         const employees = await Employees.find({});     // We are passing in a list of all the Employees, obtained by using .find() on our list of employees. We assign that list to the variable 'employees'.
     //         const document = new Document();        //This is the new document we are creating. We create this new document so that when the user modifies it, and we send back data saying that they incorrectly entered their data, we also send back the data, populating the fields that they had entered, so they know what to revise.
@@ -39,7 +60,7 @@ router.get('/', (req, res) => {
 
 //Create Documents  -------------------------------------------------------------------------------------------------------------------------------
 router.post('/', upload.single('cover'), async (req, res) => {      
-    const   fileName = req.file != null ? req.file.filename : null;        // The 'upload' parameter refers to the file we are uploading to our server when we create the new document. It uses the function single(), and the variable passed in is 'thumbnail', which is the filebname of the file being uploaded and is whatever the name you set your <input> to be
+    const   fileName = req.file != null ? req.file.filename : null;        // The 'upload' parameter refers to the file we are uploading to our server when we create the new document. It uses the function single(), and the variable passed in is 'cover', which is the filename of the file being uploaded and is whatever the name you set your <input> to be.
     const   document = new Document({
         employee:                            req.body.employee,
         documentCategory:                    req.body.documentCategory,
@@ -60,20 +81,29 @@ router.post('/', upload.single('cover'), async (req, res) => {
         // res.redirect(`documents/${newDocument.id}`);        // Not yet ready to use this line at this point in the build
         res.redirect('documents');      // Redirect user to the 'documents' page
     } catch {
-        res.render
+        if (document.coverImageName != null) {
+            removeDocumentCover(document.coverImageName)
+          }
+        renderNewPage(res, document, true);
     };
-    res.send('Create Document');
+    // res.send('Create Document');
 });
 
-function renderNewPage(res, document, hasError = false) {        //We pass in the response variable; the document variable-- sometimes a new document, sometimes an existing document--
+function removeDocumentCover(fileName) {
+    fs.unlink(path.join(uploadPath, fileName), err => {
+      if (err) console.error(err)
+    });
+  };
+
+async function renderNewPage(res, document, hasError = false) {        //We pass in the response variable; the document variable-- sometimes a new document, sometimes an existing document--
     try {
         const employees = await Employees.find({});     // We are passing in a list of all the Employees, obtained by using .find() on our list of employees. We assign that list to the variable 'employees'.
         //  const document = new Document();        //From an earlier point in the build. This is the new document we are creating. We create this new document so that when the user modifies it, and we send back data saying that they incorrectly entered their data, we also send back the data, populating the fields that they had entered, so they know what to revise.
         const params = {
             employees: employees,       // We pass in the employees variable that we just created as the value for the "employees" key
             document: document,     // We pass in the documents variable that we just created as the value for the "documents" key
-        });
-        
+        };
+        if (hasError) params.errorMessage = 'Error creating Document.';
         res.render('documents/new', params);
 }   catch {
     res.redirect('/documents');

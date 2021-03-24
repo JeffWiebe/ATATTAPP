@@ -26,7 +26,7 @@ The syntax of  < and  % is ejs syntax. Adding the = tells the server that whatev
 <label>Pages</label><br>
 <input type="Number" name="documentPages" min="1" value="<%=document.documentPages%>"/><br><br>
 <label>Cover</label><br>
-<input type="file" name="cover" size="30" value="<%=document.cover%>"/><br><br>
+<input type="file" name="cover" size="30" /><br><br>
 <label>Scan</label><br>
 <input type="text" name="documentScan" size="30" value="<%=document.documentScan%>"/><br><br>
 <label>Key Date</label><br>
@@ -40,4 +40,4 @@ The syntax of  < and  % is ejs syntax. Adding the = tells the server that whatev
 <label>Created By</label><br>
 <input type="text" name="documentCreatedBy" value="<%=document.documentCreatedBy%>"/><br><br>
 <label>Network Path</label><br>(H:/Alliance_Truss/Employees/Plant-ABB/Profiles) or (H:/Alliance_Truss/Employees/Plant-MIS/Profiles)<br>
-<input type="text" name="documentAllianceTrussNetworkPath" size="80" value="<%=document.documentAllianceTrussNetworkPath%>"/><br><br>
+<input type="text" size="80" value="<%=document.documentAllianceTrussNetworkPath%>"/><br><br>
