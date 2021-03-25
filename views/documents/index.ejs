@@ -1,13 +1,14 @@
 <h2>Search Documents</h2>
 <form action="/documents" method="GET">
-    <label>Name</label>
-    <input type="text" name="name" value="<%= searchOptions.name %>">
+    <label>Title</label>
+    <input type="text" name="title" value="<%= searchOptions.documentTitle %>">
     <button type="submit">Search</button>
 </form>
 <br>
 <% documents.forEach(document => {  %>  <!-- For each document we have... -->
     <div>
-        <%= document.employee %> - <%= document.documentTitle %> - <%= document.documentCategory %> - <%= document.documentScan %>        <!-- ... we will output their name and their shift-->
+        <%= document.employee %> - <%= document.documentTitle %> - <%= document.documentCategory %> %>        <!-- ... we will output the document's associated employee, title, category-->
+        <img height="150" width="100" src="<%= document.coverImagePath %>">
     </div>
 <% }); %> <!-- The < % flag (without - or = ) allows us to run code on our server.-->
 <br>

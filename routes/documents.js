@@ -2,19 +2,19 @@
 // Setup  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const
         express                             =   require('express'),     // We have to require express, so we do so.
-        Employees                           =   require('../models/employee'),       //We need our Employees model, so we can use .find() on it.             
         router                              =   express.Router(),               // Routing refers to how an application’s endpoints (URIs or paths + an HTTP request method like GET, POST, etc.) respond to client requests. The application “listens” for requests that match the specified route(s) and method(s), and when it detects a match, it calls the specified callback function. The Router() middleware is part of express; we need to assign it to a variable title so that we can use it in the application.
-        fs                                  =   require('fs'),
         multer                              =   require('multer'),
         path                                =   require('path'),    // Library included with express
+        fs                                  =   require('fs'),
         Document                            =   require('../models/document'),
-        imageMediaTypes                     =   ['images/jpg', 'images/jpeg', 'images/png', 'images/gif', 'images/tiff', 'images/jfif', 'images/bmp'],        //Setting up the media types we will allow to be uploaded to our Thumbnails. This will need to be accompanied later in the build, with another such line accepting PDFs, docx, etc, for the files themselves. 
+        Employee                           =   require('../models/employee'),       //We need our Employee model, so we can use .find() on it.             
         uploadPath                          =   path.join('public', Document.coverImageBasePath),       // We will use the join() function on our path variable, passing the elements to be joined of our 'public' folder with our variable documentThumbsBasePath, which is (at this typing) set to uploads/documents/thumbnails.
+        imageMimeTypes                     =   ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/jfif', 'image/bmp'],        //Setting up the media types we will allow to be uploaded to our Thumbnails. This will need to be accompanied later in the build, with another such line accepting PDFs, docx, etc, for the files themselves. 
         // documentScan                            =   document.documentScan,       // Not ready at this point in the build
         upload                              =   multer({
             dest:   uploadPath,      // We set the destination for our upload equal to our uploadPath variable.
             fileFilter: (req, file, callback) => {      // We need to filter which files our server will accept, so we don't get hacked or even just sent junk.
-                callback(null, imageMediaTypes);        //First parameter is an error function; we have no error, so we call that null. The second parameter is a Boolean: true if the file is accepted; false if it is not. We use our imageMediaTypes variable, above, in which we stipulated all the file types we'd accept for this use.
+                callback(null, imageMimeTypes.includes(file.mimetype));        //First parameter is an error function; we have no error, so we call that null. The second parameter is a Boolean: true if the file is accepted; false if it is not. We use our imageMimeTypes variable, above, in which we stipulated all the file types we'd accept for this use.
         }
         });
 
@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
     router.get('/new', async (req, res) => {
         renderNewPage(res, new Document());
     //     try {        // This code block, from an earlier point in the build, was made into the function renderNewPage()
-    //         const employees = await Employees.find({});     // We are passing in a list of all the Employees, obtained by using .find() on our list of employees. We assign that list to the variable 'employees'.
+    //         const employees = await Employee.find({});     // We are passing in a list of all the Employee, obtained by using .find() on our list of employee. We assign that list to the variable 'employee'.
     //         const document = new Document();        //This is the new document we are creating. We create this new document so that when the user modifies it, and we send back data saying that they incorrectly entered their data, we also send back the data, populating the fields that they had entered, so they know what to revise.
     //         res.render('documents/new', {
     //             employees: employees,       // We pass in the employees variable that we just created as the value for the "employees" key
@@ -95,20 +95,37 @@ function removeDocumentCover(fileName) {
     });
   };
 
-async function renderNewPage(res, document, hasError = false) {        //We pass in the response variable; the document variable-- sometimes a new document, sometimes an existing document--
+/*async function renderNewPage(res, document, hasError = false) {        //We pass in the response variable; the document variable-- sometimes a new document, sometimes an existing document--
     try {
-        const employees = await Employees.find({});     // We are passing in a list of all the Employees, obtained by using .find() on our list of employees. We assign that list to the variable 'employees'.
+        const employees = await Employee.find({});     // We are passing in a list of all the Employees, obtained by using .find() on our list of employees. We assign that list to the variable 'employees'.
         //  const document = new Document();        //From an earlier point in the build. This is the new document we are creating. We create this new document so that when the user modifies it, and we send back data saying that they incorrectly entered their data, we also send back the data, populating the fields that they had entered, so they know what to revise.
+        console.log("Employee.find({}) = " + employees);
         const params = {
             employees: employees,       // We pass in the employees variable that we just created as the value for the "employees" key
             document: document,     // We pass in the documents variable that we just created as the value for the "documents" key
         };
         if (hasError) params.errorMessage = 'Error creating Document.';
+        // if (hasError) params.errorMessage = errorMessage;
         res.render('documents/new', params);
 }   catch {
     res.redirect('/documents');
+    console.log("Error in catch of async function renderNewPage");
 };
-}
+} */
+
+async function renderNewPage(res, document, hasError = false) {
+    try {
+      const employees = await Employee.find({})
+      const params = {
+        employees: employees,
+        document: document
+      }
+      if (hasError) params.errorMessage = 'Error Creating document'
+      res.render('documents/new', params)
+    } catch {
+      res.redirect('/documents')
+    }
+  }
 
 /*
 // All Documents  -------------------------------------------------------------------------------------------------------------------------------
